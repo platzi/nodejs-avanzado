@@ -1,4 +1,5 @@
 var express = require('express'),
+    swig = require('swig'),
     middlewares = require('./middlewares/admin');
 
 var ExpressServer = function(config){
@@ -10,8 +11,13 @@ var ExpressServer = function(config){
         this.expressServer.use(middlewares[middleware]);
     }
 
+    this.expressServer.engine('html', swig.renderFile);
+    this.expressServer.set('view engine', 'html')
+    this.expressServer.set('views', __dirname + '/website/views/templates')
+    swig.setDefaults({ varControls: ['[[',']]'] })
+
     this.expressServer.get('/article/save/', function(req,res,next){
-        res.send('Hello from article save');
+        res.render('save',{})
     });
 
     this.expressServer.get('/article/remove/', function(req,res,next){
@@ -31,7 +37,7 @@ var ExpressServer = function(config){
     });
 
     this.expressServer.get('/article/list/', function(req,res,next){
-        res.send('Hello from article list');
+        res.render('article_list',{name:'Diego Alonso Uribe Gamez'})
     });
 };
 module.exports = ExpressServer;
