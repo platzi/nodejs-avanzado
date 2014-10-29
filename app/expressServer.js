@@ -6,6 +6,9 @@ var env = process.env.NODE_ENV || 'production',
 
 var ExpressServer = function(config){
     config = config || {};
+    config.swig = {
+        varControls: ['[[', ']]']
+    };
 
     this.expressServer = express();
 
@@ -17,13 +20,14 @@ var ExpressServer = function(config){
     this.expressServer.engine('html', swig.renderFile);
     this.expressServer.set('view engine', 'html');
     this.expressServer.set('views', __dirname + '/website/views/templates');
-    swig.setDefaults({varControls:['[[',']]']});
 
-    if(env == 'development'){
+    if(env === 'development'){
         console.log('OK NO HAY CACHE');
         this.expressServer.set('view cache', false);
-        swig.setDefaults({cache: false, varControls:['[[',']]']});
+        config.swig.cache = false;
     }
+    
+    swig.setDefaults(config.swig);
 
     this.expressServer.get('/article/save/', function(req,res,next){
         res.render('article_save',{nombre:'diego'});
