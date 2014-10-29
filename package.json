@@ -2,6 +2,8 @@
   "name": "javascriptAvanzado",
   "version": "0.0.1",
   "dependencies": {
-    "express": "4.9.8"
+    "express": "4.9.8",
+    "serve-favicon": "^2.1.6",
+    "swig": "^1.4.2"
   }
 }

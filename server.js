@@ -1,15 +1,8 @@
-var http = require('http')
-var express = require('express');
+var http = require('http'),
+	conf = require('./conf')
+	expressServer = require('./app/expressServer');
 
-var expressServer = express();
+var app = new expressServer();
 
-expressServer.get('/article/save/', function(req,res,next){
-    res.send('Hello from article save');
-});
-
-expressServer.get('/article/list/', function(req,res,next){
-    res.send('Hello from article list');
-});
-
-var server = http.createServer(expressServer);
-server.listen(3000);
+var server = http.createServer(app.expressServer);
+server.listen(conf.port);
