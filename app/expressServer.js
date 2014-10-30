@@ -1,7 +1,8 @@
 var env = process.env.NODE_ENV || 'production',
     express = require('express'),
     swig = require('swig'),
-    middlewares = require('./middlewares/admin');
+    middlewares = require('./middlewares/admin'),
+    router = require('./website/router');
 
 
 var ExpressServer = function(config){
@@ -25,12 +26,32 @@ var ExpressServer = function(config){
         swig.setDefaults({cache: false, varControls:['[[',']]']});
     }
 
-    this.expressServer.get('/article/see/:data', function(req,res,next){
-        res.render('article_see',{nombre:'diego'});
-    });
+    //this.expressServer.get('/article/see/:data', function(req,res,next){
+    //    res.render('article_see',{nombre:'diego'});
+    //});
 
-    this.expressServer.get('/article/list/', function(req,res,next){
-        res.render('article_list',{});
-    });
+    for (var controller in router){
+        for (var funcionalidad in router[controller].prototype){
+            var method = funcionalidad.split('_')[0];
+            var entorno = funcionalidad.split('_')[1];
+            var data = funcionalidad.split('_')[2];
+            data = (method == 'get' && data !== undefined) ? ':data' : '';
+            var url = '/' + controller + '/' + entorno + '/' + data;
+            this.router(controller,funcionalidad,method,url);
+        }
+    }   
 };
+ExpressServer.prototype.router = function(controller,funcionalidad,method,url){
+    console.log(url);
+    this.expressServer[method](url, function(req,res,next){
+       var conf = {
+           'funcionalidad':funcionalidad,
+           'req': req,
+           'res': res,
+           'next': next
+       } 
+       var Controller = new router[controller](conf);
+       Controller.response();
+    });
+}
 module.exports = ExpressServer;
