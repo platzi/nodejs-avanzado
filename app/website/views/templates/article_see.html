@@ -1,0 +1,14 @@
+ {% extends 'base.html' %}
+
+ {% block content %}
+ <p>Title: [[article.title]]</p>
+ <p>Slug: [[article.slug]]</p>
+ <p>Content: [[article.content]]</p>
+ <script type="text/javascript">
+ 	var socket = io.connect('http://127.0.0.1:3000/');
+ 	socket.on('canal', function(data){
+ 		console.log(data);
+ 		socket.emit('otro:canal', { my: 'data' });
+ 	})
+ </script>
+ {% endblock %}
