@@ -1,21 +1,11 @@
-var cluster = require('cluster');
+var http = require('http'),
+	conf = require('./conf'),
+	mongoose = require('mongoose'),
+	expressServer = require('./app/expressServer');
 
-if (cluster.isMaster){
-	var Master = require('./master');
-	var master = new Master({cluster:cluster});
+mongoose.connect('mongodb://' + conf.mongoDB.host + '/' + conf.mongoDB.name);
 
-	var cpuCunt = require('os').cpus().length;
-	console.log(cpuCunt);
-	for (var i = 0; i<cpuCunt; i++){
-		master.createWorker();
-	}
+var app = new expressServer();
 
-	cluster.on('exit', function(worker){
-		master.onWorkerExit(worker);
-	});
-} else {
-	var Workers = require('./workers');
-	var workers = new Workers();
-	workers.run();
-	console.log('worker ' + cluster.worker.id + ' running!');
-}
+var server = http.createServer(app.expressServer);
+server.listen(conf.port);

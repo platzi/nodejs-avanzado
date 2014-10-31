@@ -14,8 +14,17 @@ var Article = function(conf){
 
 Article.prototype.post_save = function(req,res,next){
 	this.model.save(req.body,function(doc){
-		res.redirect('/article/see/' + doc.slug);
+		res.redirect('/article/see/' + doc.slug)
 	})
+}
+
+Article.prototype.get_see_data = function(req,res,next){
+	var object = {};
+	var self = this;
+	this.model.get({slug:req.params.data},function(doc){
+		object.article = doc[0];
+		self.view.see(res, object);
+	});
 }
 
 Article.prototype.get_add = function(req,res,next){
@@ -23,22 +32,13 @@ Article.prototype.get_add = function(req,res,next){
 	this.view.add(res, object);
 }
 
-Article.prototype.get_see_data = function(req,res,next){
-	var self = this;
-	var object = {nombre:'see'}
-	this.model.get({slug:req.params.data},function(doc){
-		object.article = doc[0];
-		self.view.see(res, object);
-	})
-}
-
 Article.prototype.get_edit_data = function(req,res,next){
-	var object = {nombre:'edit'}
+	var object = {nombre:'add'}
 	this.view.edit(res, object);
 }
 
 Article.prototype.get_list = function(req,res,next){
-	var object = {nombre:'list'}
+	var object = {nombre:'add'}
 	this.view.list(res, object);
 }
 
